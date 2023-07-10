@@ -25,8 +25,8 @@ def save_pkl(df, filename):
 
 
 if __name__ == '__main__':
-    big_main = read_pkl('./old/big_train_main.pkl')
-    test_test = read_pkl('./old/test_test.pkl')
+    big_main = read_pkl('./data/old/big_train_main.pkl')
+    test_test = read_pkl('./data/old/test_test.pkl')
     whole_set = pd.concat([big_main, test_test])
     # 划分电影集合为movie_set1\2
     movie_set = whole_set['MovieID'].unique()
@@ -38,14 +38,14 @@ if __name__ == '__main__':
     dataset2 = big_main.loc[big_main['MovieID'].isin(movie_set2)]
     dataset1 = dataset1.reset_index(drop=True)
     dataset2 = dataset2.reset_index(drop=True)
-    save_pkl(dataset1, './dataset_sys1.pkl')
+    save_pkl(dataset1, './data/dataset_sys1.pkl')
 
     #处理冷启动域数据集
     userid_counts = dataset2['UserID'].value_counts()
     userid_counts_over_100 = userid_counts.loc[userid_counts > 100]
     old_userid_set = userid_counts_over_100.index.unique()
     old_dataset = dataset2.loc[dataset2['UserID'].isin(old_userid_set)]
-    save_pkl(old_dataset, './newdataset/big_train_main.pkl')
+    save_pkl(old_dataset, './data/big_train_main.pkl')
 
     # userid_counts_20_100 = userid_counts.loc[(userid_counts <= 100) & (userid_counts > 20)]
     # new_userid_set = userid_counts_20_100.index.unique()
@@ -88,10 +88,10 @@ if __name__ == '__main__':
     train_set_b = train_set_b.merge(old_dataset, on=['UserID', 'MovieID'], how='left')
     train_set_c = train_set_c.merge(old_dataset, on=['UserID', 'MovieID'], how='left')
     train_set_d = train_set_d.merge(old_dataset, on=['UserID', 'MovieID'], how='left')
-    save_pkl(train_set_a, './train_oneshot_a.pkl')
-    save_pkl(train_set_b, './train_oneshot_b.pkl')
-    save_pkl(train_set_c, './train_oneshot_c.pkl')
-    save_pkl(train_set_d, './train_oneshot_d.pkl')
+    save_pkl(train_set_a, './data/train_oneshot_a.pkl')
+    save_pkl(train_set_b, './data/train_oneshot_b.pkl')
+    save_pkl(train_set_c, './data/train_oneshot_c.pkl')
+    save_pkl(train_set_d, './data/train_oneshot_d.pkl')
 
     # test数据集处理
     new_dataset1 = new_dataset[['UserID', 'MovieID']]
@@ -123,7 +123,9 @@ if __name__ == '__main__':
     test_set_b = test_set_b.merge(new_dataset, on=['UserID', 'MovieID'], how='left')
     test_set_c = test_set_c.merge(new_dataset, on=['UserID', 'MovieID'], how='left')
     test_set_d = test_set_d.merge(new_dataset, on=['UserID', 'MovieID'], how='left')
-    save_pkl(test_set_a, './test_oneshot_a.pkl')
-    save_pkl(test_set_b, './test_oneshot_b.pkl')
-    save_pkl(test_set_c, './test_oneshot_c.pkl')
-    save_pkl(test_set_d, './test_test.pkl')
+    save_pkl(test_set_a, './data/test_oneshot_a.pkl')
+    save_pkl(test_set_b, './data/test_oneshot_b.pkl')
+    save_pkl(test_set_c, './data/test_oneshot_c.pkl')
+    save_pkl(test_set_d, './data/test_test.pkl')
+
+    print('success')

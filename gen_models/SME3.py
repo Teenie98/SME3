@@ -26,7 +26,7 @@ class SME3(BaseGenModel):
             nn.Tanh()
         )
         self.cross_domain_p = torch.load('../rec_models/cross_domain_p/{}_parameter.pkl'.format(args.base_model))
-        self.cross_domain_user_emb = self.cross_domain_p['embeddings.MovieID.weight']
+        self.cross_domain_user_emb = self.cross_domain_p['embeddings.UserID.weight']
         self.sim_mat = pickle.load(open('./data/SME/similar_user.pkl', 'rb')).to(device)
 
     def forward(self, rec_model, x):
@@ -35,16 +35,16 @@ class SME3(BaseGenModel):
         cross_domain_emb = self.cross_domain_user_emb[x[:, 1].long()]
         embs = torch.cat([age_emb, gender_emb, occupation_emb, cross_domain_emb], dim=1)
         embs1 = self.generated_emb_layer(embs)
-
-        sim_emb = rec_model.embeddings['UserID'](self.sim_mat[x[:, 0]][:, :20])
-
-        scores = torch.sum(embs1.unsqueeze(1) * sim_emb, dim=-1).softmax(dim=-1)
-        sim_embs = (sim_emb * scores.unsqueeze(-1)).sum(dim=1)
-
-        embs2 = self.generated_emb_layer2(torch.cat([embs, sim_embs], dim=1))
-
-        output = sim_embs + embs2
-        return output, 0
+        #
+        # sim_emb = rec_model.embeddings['UserID'](self.sim_mat[x[:, 0]][:, :20])
+        #
+        # scores = torch.sum(embs1.unsqueeze(1) * sim_emb, dim=-1).softmax(dim=-1)
+        # sim_embs = (sim_emb * scores.unsqueeze(-1)).sum(dim=1)
+        #
+        # embs2 = self.generated_emb_layer2(torch.cat([embs, sim_embs], dim=1))
+        #
+        # output = sim_embs + embs2
+        return embs1, 0
 
 
 if __name__ == '__main__':
